@@ -1,0 +1,15 @@
+// PostRepositoryImpl 인스턴스를 제공하는 Riverpod Provider 계열이다.
+
+// 컨테이너에 넣는 코드
+import 'package:class_riverpod_mvvm/providers/provider/dio_provider.dart';
+import 'package:class_riverpod_mvvm/repository/post_repository_impl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// (ref) {...} 익명 함수이며, ref는 Riverpod에서 제공하는 통로를 담당하는 객체 이다.
+// ref를 통해 Provider 내에서 다른 Provider를 읽거나 라이프 사이클을 관리할 수 있다.
+final postRepositoryProvider = Provider<PostRepositoryImpl>((ref) {
+  // ref 객체를 통해 다른 Provider에 접근을 마음대로 할 수 있다.
+  final dio = ref.read(dioProvider);
+  // 의존성 주입 -> dio는 Provider가 관리하고 있는 객체라 Provider를 통해서 가져와야 한다.
+  return PostRepositoryImpl(dio);
+});
