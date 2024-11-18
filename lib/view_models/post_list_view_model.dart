@@ -1,0 +1,49 @@
+// 리버팟 중에 notifier 계열이 상태 관리를 담당해주는 클래스이다.
+import 'package:class_riverpod_mvvm/models/post.dart';
+import 'package:class_riverpod_mvvm/repository/post_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// 리버팟을 사용하면 자동으로 화면을 갱신을 해 준다.
+// StateNotifier
+// 1. 멤버 변수로 T state 변수를 가지고 있다.
+// 2. 캡슐화의 핵심이다.
+
+class PostListViewModel extends StateNotifier<List<Post>> {
+  // 통신 요청을 통해서 데이터를 가져오는 비즈니스 로직을 담당 시킬 예정
+  final PostRepository _postRepository;
+
+  // T state --> List<Post>
+  // 맨 처음 부모 클래스 StateNotifier를 가지고 있는
+  // PostListViewModel의 상태는 당연히 빈 값을 들고 있다.
+  PostListViewModel(this._postRepository) : super([]);
+
+  // 비즈니스 로직
+  Future<void> fetchPosts() async {
+    // List<Post> = []
+    try {
+      final posts = await _postRepository.fetchPosts();
+      // List<Post>
+      state = posts;
+    } catch (e) {
+      // List<Post>
+      state = [];
+    }
+  }
+
+  // 삭제하는 비즈니스 로직
+  Future<void> deletePost(int id) async {
+    try {
+      await _postRepository.deletePost(id);
+      // 리스트 10개 중에 1개를 삭제 --> List<Post> 값 상태가 변경이 되었다.
+      // state --> [Post(), Post()..]
+      // 상태가 변경이 되면 새로운 리스트 객체를 state 변수에 넣어 줘야
+      // 상태가 변경이 되었구나 확인해서 화면을 자동으로 갱신해 준다.
+      // state --> [Post(), '삭제' Post()]
+      state = state.where((post) => post.id != id).toList(); // 새로운 리스트 객체가 생성
+      print('삭제 완료');
+    } catch (e) {
+      print('삭제 실패 : $e');
+    }
+  }
+
+}
