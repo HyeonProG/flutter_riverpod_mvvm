@@ -15,8 +15,9 @@ class PostListViewModel extends StateNotifier<List<Post>> {
   // T state --> List<Post>
   // 맨 처음 부모 클래스 StateNotifier를 가지고 있는
   // PostListViewModel의 상태는 당연히 빈 값을 들고 있다.
-  PostListViewModel(this._postRepository) : super([]);
-
+  PostListViewModel(this._postRepository) : super([]) {
+    fetchPosts();
+  }
   // 비즈니스 로직
   Future<void> fetchPosts() async {
     // List<Post> = []
