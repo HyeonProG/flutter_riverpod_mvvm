@@ -84,6 +84,12 @@ class PostListPage extends ConsumerWidget {
                     thickness: 1,
                   ),
               itemCount: postList.length),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

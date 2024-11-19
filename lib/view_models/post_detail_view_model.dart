@@ -14,7 +14,10 @@ class PostDetailViewModel extends StateNotifier<AsyncValue<Post>> {
 
   // AsyncValue는 비동기 통신(통신을 할때) 3가지 상태를 구분 지어서 화면을 구성하는데 매우 편리하다.
   // 1 - 로딩, 2 - 데이터, 3 - 오류
-  PostDetailViewModel(this._postRepository, this.postId) : super(AsyncValue.loading());
+  PostDetailViewModel(this._postRepository, this.postId) : super(AsyncValue.loading()) {
+    // 객체 생성 시 비즈니스 로직 호출
+    fetchPostGetById();
+  }
 
   // 특정 게시글 요청 기능
   Future<void> fetchPostGetById() async {
