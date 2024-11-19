@@ -1,5 +1,6 @@
 import 'package:class_riverpod_mvvm/models/post.dart';
 import 'package:class_riverpod_mvvm/providers/state_noti_provider/post_list_view_model_provider.dart';
+import 'package:class_riverpod_mvvm/view/post/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,61 +23,67 @@ class PostListPage extends ConsumerWidget {
       ),
       body: postList.isEmpty
           ? Center(
-        child: Text('게시글이 존재하지 않습니다.'),
-      )
+              child: Text('게시글이 존재하지 않습니다.'),
+            )
           : ListView.separated(
-          itemBuilder: (context, index) {
-            Post post = postList[index];
-            return ListTile(
-              title: Text(
-                post.title,
-                style: TextStyle(color: Colors.orangeAccent),
-              ),
-              subtitle: Text(post.body),
-              trailing: IconButton(
-                onPressed: () async {
-                  bool confirm = await showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('삭제'),
-                      content: Text('${post.title} 를 삭제 하시겠습니까?'),
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                            child: Text('취소')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                            child: Text('확인')),
-                      ],
+              itemBuilder: (context, index) {
+                Post post = postList[index];
+                return ListTile(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return PostDetailPage();
+                    }));
+                  },
+                  title: Text(
+                    post.title,
+                    style: TextStyle(color: Colors.orangeAccent),
+                  ),
+                  subtitle: Text(post.body),
+                  trailing: IconButton(
+                    onPressed: () async {
+                      bool confirm = await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('삭제'),
+                          content: Text('${post.title} 를 삭제 하시겠습니까?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: Text('취소')),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                                child: Text('확인')),
+                          ],
+                        ),
+                      );
+                      // 뷰모델에 접근해서 deletePost() 메서드를 호출해야 한다.
+                      // 상태를 그냥 보는 것은 직접 접근이 가능하다.
+                      // 해당하는 Provider에 상태 변경 요청은 창고 관리자에게 의뢰해야 한다.
+                      if (confirm) {
+                        await ref
+                            .read(postListViewModelProvider.notifier)
+                            .deletePost(post.id!);
+                        // 삭제 완료 후 스낵 바로 피드백 제공
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('삭제 완료')));
+                      }
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.red,
                     ),
-                  );
-                  // 뷰모델에 접근해서 deletePost() 메서드를 호출해야 한다.
-                  // 상태를 그냥 보는 것은 직접 접근이 가능하다.
-                  // 해당하는 Provider에 상태 변경 요청은 창고 관리자에게 의뢰해야 한다.
-                  if (confirm) {
-                    await ref
-                        .read(postListViewModelProvider.notifier)
-                        .deletePost(post.id!);
-                    // 삭제 완료 후 스낵 바로 피드백 제공
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('삭제 완료')));
-                  }
-                },
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                ),
-              ),
-            );
-          },
-          separatorBuilder: (context, index) => const Divider(
-            thickness: 1,
-          ),
-          itemCount: postList.length),
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => const Divider(
+                    thickness: 1,
+                  ),
+              itemCount: postList.length),
     );
   }
 }
