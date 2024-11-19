@@ -32,7 +32,7 @@ class PostListPage extends ConsumerWidget {
                   onTap: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return PostDetailPage();
+                      return PostDetailPage(postId: post.id);
                     }));
                   },
                   title: Text(
