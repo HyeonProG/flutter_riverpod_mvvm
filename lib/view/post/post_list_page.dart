@@ -1,5 +1,6 @@
 import 'package:class_riverpod_mvvm/models/post.dart';
 import 'package:class_riverpod_mvvm/providers/state_noti_provider/post_list_view_model_provider.dart';
+import 'package:class_riverpod_mvvm/view/post/post_create_page.dart';
 import 'package:class_riverpod_mvvm/view/post/post_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -86,7 +87,9 @@ class PostListPage extends ConsumerWidget {
               itemCount: postList.length),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => PostCreatePage())
+          );
         },
         child: const Icon(Icons.add),
       ),
